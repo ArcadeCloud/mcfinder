@@ -1,0 +1,223 @@
+export interface StructureType {
+  id: string;
+  name: string;
+  icon: string;
+  color: string;
+  spacing: number;      // Region spacing in chunks
+  separation: number;   // Min separation between structures
+  salt: number;         // Seed salt for this structure
+  validBiomes?: number[]; // Biome IDs where this can spawn
+  minVersion?: number;  // Minimum world gen version
+  editions: ('java' | 'bedrock')[];
+}
+
+export const STRUCTURES: StructureType[] = [
+  {
+    id: 'village',
+    name: 'Village',
+    icon: '🏠',
+    color: '#8B4513',
+    spacing: 34,
+    separation: 8,
+    salt: 10387312,
+    validBiomes: [1, 2, 5, 35, 30, 177],
+    editions: ['java', 'bedrock'],
+  },
+  {
+    id: 'desert_temple',
+    name: 'Desert Temple',
+    icon: '🏛️',
+    color: '#DEB887',
+    spacing: 32,
+    separation: 8,
+    salt: 14357617,
+    validBiomes: [2, 17],
+    editions: ['java', 'bedrock'],
+  },
+  {
+    id: 'jungle_temple',
+    name: 'Jungle Temple',
+    icon: '🗿',
+    color: '#556B2F',
+    spacing: 32,
+    separation: 8,
+    salt: 14357619,
+    validBiomes: [21, 22, 23],
+    editions: ['java', 'bedrock'],
+  },
+  {
+    id: 'witch_hut',
+    name: 'Witch Hut',
+    icon: '🧙',
+    color: '#4B0082',
+    spacing: 32,
+    separation: 8,
+    salt: 14357620,
+    validBiomes: [6],
+    editions: ['java', 'bedrock'],
+  },
+  {
+    id: 'ocean_monument',
+    name: 'Ocean Monument',
+    icon: '🔱',
+    color: '#00CED1',
+    spacing: 32,
+    separation: 5,
+    salt: 10387313,
+    validBiomes: [24, 47, 48, 49, 50],
+    editions: ['java', 'bedrock'],
+  },
+  {
+    id: 'woodland_mansion',
+    name: 'Woodland Mansion',
+    icon: '🏰',
+    color: '#8B0000',
+    spacing: 80,
+    separation: 20,
+    salt: 10387319,
+    validBiomes: [29],
+    editions: ['java', 'bedrock'],
+  },
+  {
+    id: 'ocean_ruin',
+    name: 'Ocean Ruin',
+    icon: '🏚️',
+    color: '#2F4F4F',
+    spacing: 20,
+    separation: 8,
+    salt: 14357621,
+    validBiomes: [0, 10, 24, 44, 45, 46, 47, 48, 49, 50],
+    minVersion: 13,
+    editions: ['java', 'bedrock'],
+  },
+  {
+    id: 'shipwreck',
+    name: 'Shipwreck',
+    icon: '🚢',
+    color: '#A0522D',
+    spacing: 24,
+    separation: 4,
+    salt: 165745295,
+    validBiomes: [0, 10, 16, 24, 26, 44, 45, 46, 47, 48, 49, 50],
+    minVersion: 13,
+    editions: ['java', 'bedrock'],
+  },
+  {
+    id: 'pillager_outpost',
+    name: 'Pillager Outpost',
+    icon: '⚔️',
+    color: '#696969',
+    spacing: 32,
+    separation: 8,
+    salt: 165745296,
+    validBiomes: [1, 2, 5, 35, 30, 12],
+    minVersion: 14,
+    editions: ['java', 'bedrock'],
+  },
+  {
+    id: 'ruined_portal',
+    name: 'Ruined Portal',
+    icon: '🌀',
+    color: '#9400D3',
+    spacing: 40,
+    separation: 15,
+    salt: 34222645,
+    minVersion: 16,
+    editions: ['java', 'bedrock'],
+  },
+  {
+    id: 'bastion_remnant',
+    name: 'Bastion Remnant',
+    icon: '🏗️',
+    color: '#1C1C1C',
+    spacing: 27,
+    separation: 4,
+    salt: 30084232,
+    minVersion: 16,
+    editions: ['java'],
+  },
+  {
+    id: 'fortress',
+    name: 'Nether Fortress',
+    icon: '🔥',
+    color: '#8B0000',
+    spacing: 30,
+    separation: 4,
+    salt: 30084232,
+    editions: ['java', 'bedrock'],
+  },
+  {
+    id: 'stronghold',
+    name: 'Stronghold',
+    icon: '🏯',
+    color: '#555555',
+    spacing: 0, // special placement
+    separation: 0,
+    salt: 0,
+    editions: ['java', 'bedrock'],
+  },
+  {
+    id: 'mineshaft',
+    name: 'Mineshaft',
+    icon: '⛏️',
+    color: '#8B6914',
+    spacing: 1,
+    separation: 0,
+    salt: 0,
+    editions: ['java', 'bedrock'],
+  },
+  {
+    id: 'ancient_city',
+    name: 'Ancient City',
+    icon: '🏙️',
+    color: '#0A2130',
+    spacing: 24,
+    separation: 8,
+    salt: 20083232,
+    validBiomes: [183],
+    minVersion: 19,
+    editions: ['java'],
+  },
+  {
+    id: 'trail_ruins',
+    name: 'Trail Ruins',
+    icon: '🏺',
+    color: '#C19A6B',
+    spacing: 34,
+    separation: 8,
+    salt: 83469867,
+    validBiomes: [5, 30, 32, 4, 27, 21],
+    minVersion: 20,
+    editions: ['java'],
+  },
+  {
+    id: 'trial_chambers',
+    name: 'Trial Chambers',
+    icon: '⚙️',
+    color: '#B87333',
+    spacing: 34,
+    separation: 12,
+    salt: 94251327,
+    minVersion: 21,
+    editions: ['java'],
+  },
+  // Bedrock specific - Slime Chunks
+  {
+    id: 'slime_chunk',
+    name: 'Slime Chunk',
+    icon: '🟢',
+    color: '#00FF00',
+    spacing: 1,
+    separation: 0,
+    salt: 0,
+    editions: ['java', 'bedrock'],
+  },
+];
+
+export function getStructuresForVersion(worldGenVersion: number, edition: 'java' | 'bedrock'): StructureType[] {
+  return STRUCTURES.filter(s => {
+    if (!s.editions.includes(edition)) return false;
+    if (s.minVersion && worldGenVersion < s.minVersion) return false;
+    return true;
+  });
+}
