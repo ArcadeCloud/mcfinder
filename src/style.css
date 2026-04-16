@@ -144,6 +144,24 @@ body {
   min-width: 180px;
 }
 
+.mc-input-small {
+  min-width: 70px !important;
+  width: 70px;
+}
+
+.mc-btn-small {
+  padding: 6px 10px;
+  font-size: 8px;
+}
+
+/* ===== COORDINATE INPUTS ===== */
+.coord-inputs {
+  display: flex;
+  gap: 6px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
 /* ===== MC BUTTONS ===== */
 .mc-btn {
   font-family: 'Press Start 2P', monospace;

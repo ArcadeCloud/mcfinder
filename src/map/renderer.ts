@@ -7,9 +7,11 @@ import L from 'leaflet';
 import { BiomeGenerator } from '../biomes/generator';
 import { getBiome, getBiomeColor } from '../biomes/biomeData';
 import { findStructures } from '../structures/finder';
-import { getStructuresForVersion, type StructureType } from '../structures/structureData';
+import { getStructuresForVersion } from '../structures/structureData';
 
 // Minecraft uses a simple XZ plane, not geographic coords
+// Transformation(1/16, 0, 1/16, 0) maps block coords to lat/lng by dividing by 16
+// So lat/lng values ≈ chunk coordinates
 const MinecraftCRS = L.Util.extend({}, L.CRS.Simple, {
   transformation: new L.Transformation(1 / 16, 0, 1 / 16, 0),
 });
@@ -19,6 +21,7 @@ export class MapRenderer {
   private biomeLayer: L.LayerGroup;
   private structureLayer: L.LayerGroup;
   private gridLayer: L.LayerGroup;
+  private spawnMarker: L.Marker | null = null;
   private biomeGenerator: BiomeGenerator | null = null;
   private worldSeed: bigint = 0n;
   private worldGenVersion: number = 21;
@@ -26,8 +29,6 @@ export class MapRenderer {
   private enabledStructures: Set<string> = new Set();
   private showBiomes: boolean = true;
   private showGrid: boolean = false;
-  private tileCache: Map<string, HTMLCanvasElement> = new Map();
-  private structureMarkers: Map<string, L.Marker[]> = new Map();
   private onBiomeHover: ((biomeName: string, biomeId: number, x: number, z: number) => void) | null = null;
   private onCoordsChange: ((x: number, z: number) => void) | null = null;
 
@@ -130,15 +131,28 @@ export class MapRenderer {
 
     this.structureLayer.clearLayers();
 
-    const bounds = this.map.getBounds();
-    const minChunkX = Math.floor(bounds.getWest() );
-    const maxChunkX = Math.ceil(bounds.getEast());
-    const minChunkZ = Math.floor(bounds.getSouth());
-    const maxChunkZ = Math.ceil(bounds.getNorth());
+    // Re-add spawn marker if it exists
+    if (this.spawnMarker) {
+      this.spawnMarker.addTo(this.structureLayer);
+    }
 
-    // Limit the area we search to prevent performance issues
+    const bounds = this.map.getBounds();
+    let minChunkX = Math.floor(bounds.getWest());
+    let maxChunkX = Math.ceil(bounds.getEast());
+    let minChunkZ = Math.floor(bounds.getSouth());
+    let maxChunkZ = Math.ceil(bounds.getNorth());
+
+    // Clamp search area to max 500 chunks from center instead of skipping entirely
     const maxRange = 500;
-    if (maxChunkX - minChunkX > maxRange || maxChunkZ - minChunkZ > maxRange) return;
+    if (maxChunkX - minChunkX > maxRange || maxChunkZ - minChunkZ > maxRange) {
+      const centerX = Math.floor((minChunkX + maxChunkX) / 2);
+      const centerZ = Math.floor((minChunkZ + maxChunkZ) / 2);
+      const halfRange = Math.floor(maxRange / 2);
+      minChunkX = centerX - halfRange;
+      maxChunkX = centerX + halfRange;
+      minChunkZ = centerZ - halfRange;
+      maxChunkZ = centerZ + halfRange;
+    }
 
     const structures = getStructuresForVersion(this.worldGenVersion, this.edition);
 
@@ -161,7 +175,6 @@ export class MapRenderer {
 
       for (const loc of locations) {
         if (structure.id === 'slime_chunk') {
-          // Render as a green rectangle overlay
           const rect = L.rectangle(
             [[loc.chunkZ, loc.chunkX], [loc.chunkZ + 1, loc.chunkX + 1]],
             {
@@ -200,7 +213,7 @@ export class MapRenderer {
     this.worldGenVersion = worldGenVersion;
     this.edition = edition;
     this.biomeGenerator = new BiomeGenerator(seed, worldGenVersion, edition);
-    this.tileCache.clear();
+    this.spawnMarker = null;
 
     // Refresh map
     this.biomeLayer.clearLayers();
@@ -240,11 +253,42 @@ export class MapRenderer {
     this.onCoordsChange = callback;
   }
 
-  goToCoords(blockX: number, blockZ: number) {
-    this.map.setView([blockZ / 16, blockX / 16], 0);
+  goToCoords(blockX: number, blockZ: number, zoom?: number) {
+    this.map.setView([blockZ / 16, blockX / 16], zoom ?? this.map.getZoom());
   }
 
   goToSpawn() {
-    this.goToCoords(0, 0);
+    if (this.biomeGenerator) {
+      const spawn = this.biomeGenerator.findSpawnPoint();
+
+      // Remove old spawn marker
+      if (this.spawnMarker) {
+        this.spawnMarker.remove();
+      }
+
+      // Add spawn marker
+      const icon = L.divIcon({
+        className: 'structure-marker',
+        html: '<span style="font-size:24px;filter:drop-shadow(1px 1px 2px rgba(0,0,0,0.8))">🛏️</span>',
+        iconSize: [28, 28],
+        iconAnchor: [14, 14],
+      });
+      this.spawnMarker = L.marker([spawn.z / 16, spawn.x / 16], { icon });
+      this.spawnMarker.bindPopup(`<b>Spawn Point</b><br>X: ${spawn.x}, Z: ${spawn.z}`);
+      this.spawnMarker.addTo(this.structureLayer);
+
+      this.goToCoords(spawn.x, spawn.z, 0);
+    } else {
+      this.goToCoords(0, 0, 0);
+    }
+  }
+
+  getMapPosition(): { x: number; z: number; zoom: number } {
+    const center = this.map.getCenter();
+    return {
+      x: Math.floor(center.lng * 16),
+      z: Math.floor(center.lat * 16),
+      zoom: this.map.getZoom(),
+    };
   }
 }

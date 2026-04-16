@@ -276,6 +276,30 @@ export class BiomeGenerator {
   getBiomeForChunk(chunkX: number, chunkZ: number): number {
     return this.getBiomeAt(chunkX * 16 + 8, chunkZ * 16 + 8);
   }
+
+  /**
+   * Find spawn point by searching outward from 0,0 for a valid spawn biome.
+   * Minecraft searches in a spiral for Plains, Forest, Taiga, etc.
+   */
+  findSpawnPoint(): { x: number; z: number } {
+    const SPAWN_BIOMES = [1, 4, 5, 27, 29, 21, 35, 177, 178, 185]; // Plains, Forest, Taiga, Birch, Dark Forest, Jungle, Savanna, Meadow, Grove, Cherry
+    // Spiral search from 0,0
+    for (let radius = 0; radius <= 1024; radius += 16) {
+      for (let x = -radius; x <= radius; x += 16) {
+        for (const z of [-radius, radius]) {
+          const biome = this.getBiomeAt(x, z);
+          if (SPAWN_BIOMES.includes(biome)) return { x, z };
+        }
+      }
+      for (let z = -radius + 16; z < radius; z += 16) {
+        for (const x of [-radius, radius]) {
+          const biome = this.getBiomeAt(x, z);
+          if (SPAWN_BIOMES.includes(biome)) return { x, z };
+        }
+      }
+    }
+    return { x: 0, z: 0 };
+  }
 }
 
 // ===== Seed utilities =====
