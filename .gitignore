@@ -1,8 +1,0 @@
-node_modules/
-dist/
-src/
-public/
-build.sh
-package.json
-package-lock.json
-tsconfig.json
