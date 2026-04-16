@@ -4,84 +4,101 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MCFinder - Minecraft Seed Map</title>
-    <link rel="stylesheet"  />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       <link rel="stylesheet" href="./main.css" />
   </head>
   <body>
     <div id="app">
-      <header id="header">
-        <div class="header-left">
-          <h1 class="logo">MCFinder</h1>
-          <span class="tagline">Seed Map Explorer</span>
+      <!-- Top Bar -->
+      <header id="topbar">
+        <div class="topbar-brand">
+          <span class="brand-icon">&#9618;</span>
+          <span class="brand-name">MCFinder</span>
         </div>
-        <div class="header-controls">
-          <div class="mc-select-group">
-            <label for="edition-select">Edition</label>
-            <select id="edition-select" class="mc-select">
-              <option value="java">Java Edition</option>
-              <option value="bedrock">Bedrock Edition</option>
+        <div class="topbar-controls">
+          <div class="control-group">
+            <label>Seed</label>
+            <input type="text" id="seed-input" placeholder="Enter seed..." />
+          </div>
+          <button id="load-btn" class="btn btn-primary">Load</button>
+          <button id="random-btn" class="btn">Random</button>
+          <div class="control-group">
+            <label>Platform</label>
+            <select id="edition-select">
+              <option value="java">Java</option>
+              <option value="bedrock">Bedrock</option>
             </select>
           </div>
-          <div class="mc-select-group">
-            <label for="version-select">Version</label>
-            <select id="version-select" class="mc-select"></select>
+          <div class="control-group">
+            <label>Version</label>
+            <select id="version-select"></select>
           </div>
-          <div class="mc-input-group">
-            <label for="seed-input">Seed</label>
-            <input type="text" id="seed-input" class="mc-input" placeholder="Enter seed..." />
+          <div class="control-group">
+            <label>Dimension</label>
+            <select id="dimension-select">
+              <option value="overworld">Overworld</option>
+              <option value="nether">Nether</option>
+              <option value="end">End</option>
+            </select>
           </div>
-          <button id="load-btn" class="mc-btn">Load</button>
-          <button id="random-btn" class="mc-btn mc-btn-secondary">Random</button>
-          <button id="spawn-btn" class="mc-btn mc-btn-secondary">Spawn</button>
         </div>
       </header>
 
-      <div id="main-container">
-        <aside id="sidebar">
-          <div class="sidebar-section">
-            <h3 class="sidebar-title">Go To</h3>
-            <div class="coord-inputs">
-              <div class="mc-input-group">
-                <label for="goto-x">X</label>
-                <input type="number" id="goto-x" class="mc-input mc-input-small" placeholder="0" />
-              </div>
-              <div class="mc-input-group">
-                <label for="goto-z">Z</label>
-                <input type="number" id="goto-z" class="mc-input mc-input-small" placeholder="0" />
-              </div>
-              <button id="goto-btn" class="mc-btn mc-btn-secondary mc-btn-small">Go</button>
+      <div id="main">
+        <!-- Left Panel -->
+        <aside id="panel">
+          <!-- Go To -->
+          <div class="panel-section">
+            <div class="section-header">Navigate</div>
+            <div class="nav-row">
+              <input type="number" id="goto-x" placeholder="X" />
+              <input type="number" id="goto-z" placeholder="Z" />
+              <button id="goto-btn" class="btn btn-small">Go!</button>
+              <button id="spawn-btn" class="btn btn-small">Spawn</button>
             </div>
           </div>
-          <div class="sidebar-section">
-            <h3 class="sidebar-title">Structures</h3>
-            <div id="structure-toggles" class="toggle-list"></div>
+
+          <!-- Features -->
+          <div class="panel-section">
+            <div class="section-header">Features</div>
+            <div class="feature-toggles">
+              <label class="feature-toggle">
+                <input type="checkbox" id="show-biomes" checked />
+                <span class="toggle-swatch" style="background:#8DB360"></span>
+                <span>Biomes</span>
+              </label>
+              <label class="feature-toggle">
+                <input type="checkbox" id="show-grid" />
+                <span class="toggle-swatch" style="background:#666"></span>
+                <span>Grid</span>
+              </label>
+              <label class="feature-toggle">
+                <input type="checkbox" id="show-coords" checked />
+                <span class="toggle-swatch" style="background:#aaa"></span>
+                <span>Coordinates</span>
+              </label>
+            </div>
           </div>
-          <div class="sidebar-section">
-            <h3 class="sidebar-title">Display</h3>
-            <div class="toggle-item">
-              <input type="checkbox" id="show-biomes" checked />
-              <label for="show-biomes">Biomes</label>
-            </div>
-            <div class="toggle-item">
-              <input type="checkbox" id="show-grid" />
-              <label for="show-grid">Chunk Grid</label>
-            </div>
-            <div class="toggle-item">
-              <input type="checkbox" id="show-coords" checked />
-              <label for="show-coords">Coordinates</label>
-            </div>
+
+          <!-- Structures -->
+          <div class="panel-section">
+            <div class="section-header">Structures</div>
+            <div id="structure-toggles" class="feature-toggles"></div>
           </div>
-          <div class="sidebar-section">
-            <h3 class="sidebar-title">Info</h3>
+
+          <!-- Info -->
+          <div class="panel-section">
+            <div class="section-header">Info</div>
             <div id="info-panel" class="info-panel">
-              <p>Hover over the map to see biome info</p>
+              <span class="info-hint">Hover over the map</span>
             </div>
           </div>
         </aside>
 
-        <div id="map-container">
+        <!-- Map -->
+        <div id="map-wrap">
           <div id="map"></div>
-          <div id="coords-display" class="coords-display">X: 0, Z: 0</div>
+          <div id="coords-display">X: 0, Z: 0</div>
         </div>
       </div>
     </div>
